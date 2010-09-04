@@ -69,7 +69,7 @@ fullscreenEventHook _ = return $ All True
 main = xmonad $ gnomeConfig {
          modMask = mod4Mask
 	-- Hook in with Gnome
-	, manageHook    = myManageHook <+> manageHook gnomeConfig
+	, manageHook = myManageHook <+> manageHook gnomeConfig
 	-- Support fullscreen for Totem
 	, handleEventHook = fullscreenEventHook `mappend` handleEventHook gnomeConfig
 	-- Turn on smartBoarders (e.g., no borders for fullscreen),
