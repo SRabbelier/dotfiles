@@ -5,6 +5,16 @@ import XMonad.Hooks.ManageHelpers -- For isFullscreen, doFullFloat
 import XMonad.Layout.NoBorders -- For smartBorders
 import XMonad.Util.EZConfig(additionalKeys)
 
+-- Needed for fullscreenEventHook implementation
+import Data.List
+import Data.Maybe
+import Data.Monoid (All (All), mappend)
+import Monad
+import qualified XMonad.StackSet as W
+import XMonad.Util.WindowProperties (getProp32)
+import XMonad.Util.XUtils (fi)
+
+
 -- http://www.haskell.org/haskellwiki/Xmonad
 -- sudo aptitude install xmonad
 -- gconftool-2 -s /desktop/gnome/session/required_components/windowmanager xmonad --type string
@@ -26,10 +36,41 @@ myManageHook = composeAll
 	,(isFullscreen)  --> doFullFloat
 	]
 
+-- http://code.google.com/p/xmonad/issues/detail?id=339
+fullscreenEventHook :: Event -> X All
+fullscreenEventHook (ClientMessageEvent _ _ _ dpy win typ (action:dats)) = do
+  state <- getAtom "_NET_WM_STATE"
+  fullsc <- getAtom "_NET_WM_STATE_FULLSCREEN"
+  wstate <- fromMaybe [] `fmap` getProp32 state win
+
+  let isFull = fromIntegral fullsc `elem` wstate
+
+      -- Constants for the _NET_WM_STATE protocol:
+      remove = 0
+      add = 1
+      toggle = 2
+      ptype = 4 -- The atom property type for changeProperty
+      chWstate f = io $ changeProperty32 dpy win state ptype propModeReplace (f wstate)
+
+  when (typ == state && fi fullsc `elem` dats) $ do
+    when (action == add || (action == toggle && not isFull)) $ do
+      chWstate (fi fullsc:)
+      windows $ W.float win $ W.RationalRect 0 0 1 1
+    when (action == remove || (action == toggle && isFull)) $ do
+      chWstate $ delete (fi fullsc)
+      windows $ W.sink win
+
+  return $ All True
+
+fullscreenEventHook _ = return $ All True
+
+
 main = xmonad $ gnomeConfig {
          modMask = mod4Mask
 	-- Hook in with Gnome
 	, manageHook    = myManageHook <+> manageHook gnomeConfig
+	-- Support fullscreen for Totem
+	, handleEventHook = fullscreenEventHook `mappend` handleEventHook gnomeConfig
 	-- Turn on smartBoarders (e.g., no borders for fullscreen),
 	-- while still using gnomeConfig
 	-- http://www.haskell.org/haskellwiki/Xmonad/Frequently_asked_questions#Watch_fullscreen_flash_video
