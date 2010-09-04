@@ -34,6 +34,7 @@ myManageHook = composeAll
 	,(className =? "Google-chrome" <&&> title =? "- chat -") --> doFloat
 	-- Support for fullscreen
 	,(isFullscreen)  --> doFullFloat
+	,(isDialog) --> doCenterFloat
 	]
 
 -- http://code.google.com/p/xmonad/issues/detail?id=339
