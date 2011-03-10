@@ -3,7 +3,7 @@ import XMonad.Actions.CycleWS -- For cycling workspaces
 import XMonad.Config.Gnome -- For gnomeConfig
 import XMonad.Hooks.ManageHelpers -- For isFullscreen, doFullFloat
 import XMonad.Layout.NoBorders -- For smartBorders
-import XMonad.Util.EZConfig(additionalKeys)
+import XMonad.Util.EZConfig(additionalKeys) -- For configuring keybindings
 
 -- Needed for fullscreenEventHook implementation
 import Data.List
