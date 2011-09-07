@@ -72,6 +72,7 @@ main = xmonad $ gnomeConfig {
 	, manageHook = myManageHook <+> manageHook gnomeConfig
 	-- Support fullscreen for Totem
 	, handleEventHook = fullscreenEventHook `mappend` handleEventHook gnomeConfig
+	, workspaces = ["one", "two", "three", "four"]
 	-- Turn on smartBoarders (e.g., no borders for fullscreen),
 	-- while still using gnomeConfig
 	-- http://www.haskell.org/haskellwiki/Xmonad/Frequently_asked_questions#Watch_fullscreen_flash_video
@@ -85,7 +86,6 @@ main = xmonad $ gnomeConfig {
 	[ ((0,                      xK_Print),  spawn "scrot")
 	-- Rebind mod-shift-q to logout
 	, ((mod4Mask .|. shiftMask, xK_q),      spawn "gnome-session-save --gui --logout-dialog")
-	-- Moving through workspaces
 	-- http://xmonad.org/xmonad-docs/xmonad-contrib/XMonad-Actions-CycleWS.html
 	, ((mod4Mask,               xK_Right),  nextWS)
 	, ((mod4Mask,               xK_Left),   prevWS)
