@@ -1,0 +1,6 @@
+[GNOME Session]
+Name=XGnome
+RequiredComponents=gnome-panel;gnome-settings-daemon;
+RequiredProviders=windowmanager;notifications;
+DefaultProvider-windowmanager=xmonad
+DefaultProvider-notifications=notification-daemon

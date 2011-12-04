@@ -18,6 +18,7 @@ import XMonad.Util.XUtils (fi)
 -- http://www.haskell.org/haskellwiki/Xmonad
 -- sudo aptitude install xmonad
 -- gconftool-2 -s /desktop/gnome/session/required_components/windowmanager xmonad --type string
+-- gsettings set org.gnome.desktop.session session-name xmonad
 -- ^j ^k: move through windows
 -- ^J ^K: move window
 -- ^h ^l: resize major
