@@ -67,6 +67,7 @@ fullscreenEventHook (ClientMessageEvent _ _ _ dpy win typ (action:dats)) = do
 fullscreenEventHook _ = return $ All True
 
 fetchOtp = spawn $ "/usr/bin/fetchotp -x"
+fetchPersonalOtp = spawn $ "/usr/bin/fetchotp -x --account='srabbelier@gmail.com'"
 
 
 main = xmonad $ gnomeConfig {
@@ -97,4 +98,5 @@ main = xmonad $ gnomeConfig {
 	-- Toggle between last workspace
 	, ((mod4Mask,               xK_z),     toggleWS)
 	, ((mod4Mask, xK_o), fetchOtp)
+	, ((mod4Mask, xK_p), fetchPersonalOtp)
 	]
