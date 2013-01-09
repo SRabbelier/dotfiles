@@ -9,7 +9,7 @@ import XMonad.Util.EZConfig(additionalKeys) -- For configuring keybindings
 import Data.List
 import Data.Maybe
 import Data.Monoid (All (All), mappend)
-import Monad
+import Control.Monad
 import qualified XMonad.StackSet as W
 import XMonad.Util.WindowProperties (getProp32)
 import XMonad.Util.XUtils (fi)
@@ -34,37 +34,9 @@ myManageHook = composeAll
 	,(className =? "Google-chrome" <&&> title =? "Google Chrome Options") --> doFloat
 	,(className =? "Google-chrome" <&&> title =? "- chat -") --> doFloat
 	-- Support for fullscreen
-	,(isFullscreen)  --> doFullFloat
+	-- ,(isFullscreen)  --> doFullFloat
 	,(isDialog) --> doCenterFloat
 	]
-
--- http://code.google.com/p/xmonad/issues/detail?id=339
-fullscreenEventHook :: Event -> X All
-fullscreenEventHook (ClientMessageEvent _ _ _ dpy win typ (action:dats)) = do
-  state <- getAtom "_NET_WM_STATE"
-  fullsc <- getAtom "_NET_WM_STATE_FULLSCREEN"
-  wstate <- fromMaybe [] `fmap` getProp32 state win
-
-  let isFull = fromIntegral fullsc `elem` wstate
-
-      -- Constants for the _NET_WM_STATE protocol:
-      remove = 0
-      add = 1
-      toggle = 2
-      ptype = 4 -- The atom property type for changeProperty
-      chWstate f = io $ changeProperty32 dpy win state ptype propModeReplace (f wstate)
-
-  when (typ == state && fi fullsc `elem` dats) $ do
-    when (action == add || (action == toggle && not isFull)) $ do
-      chWstate (fi fullsc:)
-      windows $ W.float win $ W.RationalRect 0 0 1 1
-    when (action == remove || (action == toggle && isFull)) $ do
-      chWstate $ delete (fi fullsc)
-      windows $ W.sink win
-
-  return $ All True
-
-fullscreenEventHook _ = return $ All True
 
 fetchOtp = spawn $ "/usr/bin/fetchotp -x"
 fetchPersonalOtp = spawn $ "/usr/bin/fetchotp -x --account='srabbelier@gmail.com'"
@@ -74,8 +46,6 @@ main = xmonad $ gnomeConfig {
          modMask = mod4Mask
 	-- Hook in with Gnome
 	, manageHook = myManageHook <+> manageHook gnomeConfig
-	-- Support fullscreen for Totem
-	, handleEventHook = fullscreenEventHook `mappend` handleEventHook gnomeConfig
 	, workspaces = ["one", "two", "three", "four"]
 	-- Turn on smartBoarders (e.g., no borders for fullscreen),
 	-- while still using gnomeConfig
